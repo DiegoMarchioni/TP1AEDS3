@@ -19,6 +19,7 @@ public class Arquivo<T extends Registro> {
   protected Constructor<T> construtor;
   final protected int TAM_CABECALHO = 4;
   protected HashExtensivel<ParIDEndereco> indiceDireto;
+  protected IndiceAuxiliar indiceAux;
 
   public Arquivo(String na, Constructor<T> c) throws Exception {
     this.nomeEntidade = na;
@@ -28,6 +29,7 @@ public class Arquivo<T extends Registro> {
       arquivo.seek(0);
       arquivo.writeInt(0);
     }
+    indiceAux = new IndiceAuxiliar();
     indiceDireto = new HashExtensivel<>(ParIDEndereco.class.getConstructor(),
         3,
         "dados/" + na + ".hash_d.db",
@@ -70,7 +72,9 @@ public class Arquivo<T extends Registro> {
     }
     return null;
   }
+  
 
+  //Delete Alterado para enviar dados para o arquivo de excluidos (Classe IndiceAuxiliar)
   public boolean delete(int id) throws Exception {
     ParIDEndereco pie = indiceDireto.read(id);
     long endereco = pie != null ? pie.getEndereco() : -1;
@@ -78,6 +82,7 @@ public class Arquivo<T extends Registro> {
       arquivo.seek(endereco);
       arquivo.writeByte('*');
       indiceDireto.delete(id);
+      indiceAux.create(20,endereco);
       return true;
     } else
       return false;

@@ -6,7 +6,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class ParTamEndereco implements RegistroHashExtensivel {
+public class ParTamEndereco{
 
   private short tam;
   private long endereco;
@@ -16,8 +16,8 @@ public class ParTamEndereco implements RegistroHashExtensivel {
     this(-1, -1);
   }
 
-  public ParTamEndereco(short i, long e) {
-    this.tam = i;
+  public ParTamEndereco(int i, long e) {
+    this.tam = (short)i;
     this.endereco = e;
   }
 
@@ -27,10 +27,6 @@ public class ParTamEndereco implements RegistroHashExtensivel {
 
   public long getEndereco() {
     return endereco;
-  }
-
-  public short hashCode() {
-    return this.tam;
   }
 
   public short size() {
