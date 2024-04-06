@@ -36,10 +36,17 @@ class Principal {
       id5 = arqLivros.create(l5);
       System.out.println("Livro criado com o ID: " + id5);
 
+      //TESTANDO INDICE AUX
+
       if (arqLivros.delete(id2))
         System.out.println("Livro de ID " + id2 + " excluído!");
       else
         System.out.println("Livro de ID " + id2 + " não encontrado!");
+
+      if( arqLivros.delete(id3))
+        System.out.println("Livro de ID " + id3 + " excluído!");
+      else
+        System.out.println("Livro de ID " + id3 + " não encontrado!");
 
       l4.setTitulo("A Memória");
       if (arqLivros.update(l4))

@@ -82,7 +82,7 @@ public class Arquivo<T extends Registro> {
       arquivo.seek(endereco);
       arquivo.writeByte('*');
       indiceDireto.delete(id);
-      indiceAux.create(20,endereco);
+      indiceAux.create(arquivo.readShort(),endereco);
       return true;
     } else
       return false;
@@ -107,8 +107,12 @@ public class Arquivo<T extends Registro> {
         arquivo.seek(endereco + 1 + 2);
         arquivo.write(ba2);
       } else {
+
+        //delecao
         arquivo.seek(endereco);
         arquivo.writeByte('*');
+        indiceAux.create(arquivo.readShort(), endereco);
+
         arquivo.seek(arquivo.length());
         long endereco2 = arquivo.getFilePointer();
         arquivo.writeByte(' ');
@@ -124,6 +128,7 @@ public class Arquivo<T extends Registro> {
   public void close() throws Exception {
     arquivo.close();
     indiceDireto.close();
+    indiceAux.close();
   }
 
   // REORGANIZAR - VERSÃO QUE REORDENA O ARQUIVO, USANDO INTERCALAÇÃO BALANCEADA

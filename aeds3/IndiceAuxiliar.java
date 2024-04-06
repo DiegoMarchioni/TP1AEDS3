@@ -27,6 +27,8 @@ public class IndiceAuxiliar {
 
   RandomAccessFile arq;
   ParTamEndereco par;
+  final int TAM_CABECALHO = 4;
+  final float PERCA_ACEITAVEL = 1.25f;
 
   public IndiceAuxiliar() throws Exception {
 
@@ -39,7 +41,7 @@ public class IndiceAuxiliar {
     }
   }
   //
-  public void create(int tam, long endereco) throws Exception {
+  public void create(short tam, long endereco) throws Exception {
     par = new ParTamEndereco(tam, endereco);
     // Carrega o diretório
     byte[] bd = par.toByteArray();
@@ -50,13 +52,30 @@ public class IndiceAuxiliar {
 
     // Identifica a hash do diretório,
     arq.seek(arq.length());
+    arq.writeByte(' ');
+    arq.writeShort((short) bd.length);
     arq.write(bd);
+
+    this.print();
   }
   
   public void print() throws Exception{
+
+    arq.seek(TAM_CABECALHO);
+    ParTamEndereco pte = new ParTamEndereco();
+
+    System.out.println("------------- Printando Indice Auxliar -------------");
+
     while(arq.getFilePointer() < arq.length()){
-      System.out.println("Tamanho: " + arq.readShort() + " Endereco" + arq.readLong());
+      if(arq.readByte() == ' '){
+        short tam = arq.readShort();
+        byte[] ba = new byte[tam];
+        arq.read(ba);
+        pte.fromByteArray(ba);
+        System.out.println("Tamanho: " + pte.getTam() + " Endereco: " + pte.getEndereco() );
+      }
     }
+    System.out.println("------------- Fim Indice Auxliar -------------");
   }
 
 
