@@ -9,6 +9,7 @@ class Principal {
     new File("dados/livros.db").delete();
     new File("dados/livros.hash_d.db").delete();
     new File("dados/livros.hash_c.db").delete();
+    new File("dados/ArquivoDeExcluidos.db").delete();
 
     Arquivo<Livro> arqLivros;
     Livro l1 = new Livro(-1, "9788563560278", "Odisseia", 15.99F);
@@ -16,7 +17,19 @@ class Principal {
     Livro l3 = new Livro(-1, "9786559790005", "Modernidade Líquida", 48.1F);
     Livro l4 = new Livro(-1, "9788582714911", "Memória", 55.58F);
     Livro l5 = new Livro(-1, "9786587150062", "Com Amor", 48.9F);
+
+
+    //Livros para teste do aproveitamento de espaco
+    Livro lt1 = new Livro(-1, "9788563560278", "Gersseia", 15.99F);
+    Livro lt2 = new Livro(-1, "9788584290482", "Ensrnu Híbrido", 39.90F);
+    Livro lt3 = new Livro(-1, "9786559790005", "Modernidute Líquida", 48.1F);
+    Livro lt4 = new Livro(-1, "9788582714911", "Esqueci", 55.58F);
+    Livro lt5 = new Livro(-1, "9786587150062", "Sem Amor", 48.9F);
+
+
     int id1, id2, id3, id4, id5;
+
+    int idt1, idt2, idt3, idt4, idt5;
 
     try {
       arqLivros = new Arquivo<>("livros", Livro.class.getConstructor());
@@ -54,13 +67,19 @@ class Principal {
       else
         System.out.println("Livro de ID " + l4.getID() + " não encontrado!");
 
-      arqLivros.reorganizar();
+      //TESTANDO APROVEITAMENTO DE ESPACOS VAZIOS
+      idt4 = arqLivros.create(lt4);
+      System.out.println("\nLivro 4:\n" + arqLivros.read(idt4));
 
+      //arqLivros.reorganizar();
+
+      /* 
       System.out.println("\nLivro 3:\n" + arqLivros.read(3));
       System.out.println("\nLivro 1:\n" + arqLivros.read(1));
       System.out.println("\nLivro 5:\n" + arqLivros.read(5));
       System.out.println("\nLivro 4:\n" + arqLivros.read(4));
       System.out.println("\nLivro 2:\n" + arqLivros.read(2));
+      */
 
       arqLivros.close();
 

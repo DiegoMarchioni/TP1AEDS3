@@ -44,13 +44,31 @@ public class Arquivo<T extends Registro> {
     arquivo.writeInt(ultimoID);
     obj.setID(ultimoID);
 
-    arquivo.seek(arquivo.length());
-    long endereco = arquivo.getFilePointer();
     byte[] ba = obj.toByteArray();
     short tam = (short) ba.length;
-    arquivo.writeByte(' '); // lápide
-    arquivo.writeShort(tam);
-    arquivo.write(ba);
+    //busca uma lapide com um tamanho aceitavel em relacao ao tamanho do novo objeto
+    long endereco = indiceAux.read(tam);
+
+    //se nao encontrar uma lapide, salva no final do arquivo
+    if(endereco == -1){
+      arquivo.seek(arquivo.length());
+      endereco = arquivo.getFilePointer();
+      arquivo.writeByte(' '); // lápide
+      arquivo.writeShort(tam);
+      arquivo.write(ba);
+    } 
+    //se encontrar uma lapide, substitui o registro antigo pelo novo
+    else {
+      arquivo.seek(endereco);
+      arquivo.writeByte(' ');
+      //mantem o mesmo tamanho do registro antigo
+      arquivo.readShort();
+
+      arquivo.write(ba);
+
+    }
+
+    //cria um novo registro no hash 
     indiceDireto.create(new ParIDEndereco(obj.getID(), endereco));
     return obj.getID();
   }
@@ -63,6 +81,10 @@ public class Arquivo<T extends Registro> {
     ParIDEndereco pie = indiceDireto.read(id);
     long endereco = pie != null ? pie.getEndereco() : -1;
     if (endereco != -1) {
+
+      //CHECANDO O ENDERECO(PARA TESTAR O APROVEITAMENTO DE ESPACOS)
+      System.out.println("ENDERECO DO REGISTRO: "+ endereco);
+
       arquivo.seek(endereco + 1); // pula o lápide também
       tam = arquivo.readShort();
       ba = new byte[tam];
@@ -112,13 +134,32 @@ public class Arquivo<T extends Registro> {
         arquivo.seek(endereco);
         arquivo.writeByte('*');
         indiceAux.create(arquivo.readShort(), endereco);
+        
+        //busca uma lapide com um tamanho aceitavel em relacao ao tamanho do novo objeto
+        long endereco2 = indiceAux.read(tam2);
 
-        arquivo.seek(arquivo.length());
-        long endereco2 = arquivo.getFilePointer();
-        arquivo.writeByte(' ');
-        arquivo.writeShort(tam2);
-        arquivo.write(ba2);
+        //se nao encontrar uma lapide, salva no final do arquivo
+        if(endereco2 == -1){
+          arquivo.seek(arquivo.length());
+          endereco2 = arquivo.getFilePointer();
+          arquivo.writeByte(' ');
+          arquivo.writeShort(tam2);
+          arquivo.write(ba2);
+        } 
+        //se encontrar uma lapide, substitui o registro antigo pelo novo
+        else {
+          arquivo.seek(endereco2);
+          arquivo.writeByte(' ');
+          //mantem o mesmo tamanho do registro antigo
+          arquivo.readShort();
+
+          arquivo.write(ba2);
+
+        }
+
+        //atualiza o endereco do hash pelo endereco2
         indiceDireto.update(new ParIDEndereco(novoObj.getID(), endereco2));
+
       }
       return true;
     }
