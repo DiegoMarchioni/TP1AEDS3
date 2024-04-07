@@ -5,6 +5,7 @@ import aeds3.Arquivo;
 class Principal {
 
   public static void main(String args[]) {
+    
 
     new File("dados/livros.db").delete();
     new File("dados/livros.hash_d.db").delete();
