@@ -1,87 +1,124 @@
 import java.io.*;
+import java.util.Scanner;
+import java.util.ArrayList;
 
 import aeds3.Arquivo;
 
 class Principal {
 
   public static void main(String args[]) {
-    
 
     new File("dados/livros.db").delete();
     new File("dados/livros.hash_d.db").delete();
     new File("dados/livros.hash_c.db").delete();
     new File("dados/ArquivoDeExcluidos.db").delete();
-
-    Arquivo<Livro> arqLivros;
-    Livro l1 = new Livro(-1, "9788563560278", "Odisseia", 15.99F);
-    Livro l2 = new Livro(-1, "9788584290482", "Ensino Híbrido", 39.90F);
-    Livro l3 = new Livro(-1, "9786559790005", "Modernidade Líquida", 48.1F);
-    Livro l4 = new Livro(-1, "9788582714911", "Memória", 55.58F);
-    Livro l5 = new Livro(-1, "9786587150062", "Com Amor", 48.9F);
-
-
-    //Livros para teste do aproveitamento de espaco
-    Livro lt1 = new Livro(-1, "9788563560278", "Gersseia", 15.99F);
-    Livro lt2 = new Livro(-1, "9788584290482", "Ensrnu Híbrido", 39.90F);
-    Livro lt3 = new Livro(-1, "9786559790005", "Modernidute Líquida", 48.1F);
-    Livro lt4 = new Livro(-1, "9788582714911", "Esqueci", 55.58F);
-    Livro lt5 = new Livro(-1, "9786587150062", "Sem Amor", 48.9F);
-
-
-    int id1, id2, id3, id4, id5;
-
-    int idt1, idt2, idt3, idt4, idt5;
+    new File("dados/blocos.listainv.db").delete();
+    new File("dados/dicionario.listainv.db").delete();
 
     try {
-      arqLivros = new Arquivo<>("livros", Livro.class.getConstructor());
 
-      id1 = arqLivros.create(l1);
-      System.out.println("Livro criado com o ID: " + id1);
+      // Abrindo arquivo para Livros
+      ArquivoLivros arqLivros = new ArquivoLivros();
 
-      id2 = arqLivros.create(l2);
-      System.out.println("Livro criado com o ID: " + id2);
+      Scanner console = new Scanner(System.in);
+      int opcao;
+      do {
 
-      id3 = arqLivros.create(l3);
-      System.out.println("Livro criado com o ID: " + id3);
+        //arqLivros.DEBUG();
 
-      id4 = arqLivros.create(l4);
-      System.out.println("Livro criado com o ID: " + id4);
+        // imprimir menu
+        System.out.println("\n\n-------------------------------");
+        System.out.println("              MENU");
+        System.out.println("-------------------------------");
+        System.out.println("1 - Inserir");
+        System.out.println("2 - Buscar");
+        System.out.println("3 - Excluir");
+        System.out.println("4 - Atualizar");
+        System.out.println("0 - Sair");
+        try {
+          opcao = Integer.valueOf(console.nextLine());
+        } catch (NumberFormatException e) {
+          opcao = -1;
+        }
 
-      id5 = arqLivros.create(l5);
-      System.out.println("Livro criado com o ID: " + id5);
+        switch (opcao) {
+          case 1: {// inserir livro
+            System.out.println("\nINCLUSÃO");
+            try {
+              // ler os atributos do novo livro
+              System.out.print("ISBN: "); 
+              String isbn = console.nextLine();
+              System.out.print("Nome: ");
+              String nome = console.nextLine();
+              System.out.print("Preco: ");
+              float preco = Float.valueOf(console.nextLine());
+              // criar novo objeto e envia-lo para a funcao da lista
+              Livro liv = new Livro(-1, isbn, nome, preco);
+              int livro = arqLivros.create(liv);
+            } catch (Exception e) {
+            }
+          }
+          break;
 
-      //TESTANDO INDICE AUX
+          case 2: {// buscar livro
+            System.out.println("\nBUSCA");
+            System.out.print("Chave de busca: ");
+            try {
+              // ler a chave de busca e criar uma lista com os resultados da procura
+              String busca = console.nextLine();
+              ArrayList<Livro> lista = arqLivros.read(busca);
+              // imprimir resultados da consulta
+              if (lista != null) {
+                for (Livro l : lista) {
+                  System.out.println(l.toString());
+                }
+              }
+            } catch (Exception e) {
+            }
+          }
+            break;
 
-      if (arqLivros.delete(id2))
-        System.out.println("Livro de ID " + id2 + " excluído!");
-      else
-        System.out.println("Livro de ID " + id2 + " não encontrado!");
+          case 3: {// deletar livro
+            System.out.println("\nEXCLUSÃO");
+            System.out.print("ISBN do livro a ser deletado: ");
+            try {
+              // ler id do registro a ser deletado e chamar a funcao responsável pela deleção
+              String isbn = console.nextLine();
+              arqLivros.delete(isbn);
+            } catch (Exception e) {
+            }
+          }
+            break;
 
-      if( arqLivros.delete(id3))
-        System.out.println("Livro de ID " + id3 + " excluído!");
-      else
-        System.out.println("Livro de ID " + id3 + " não encontrado!");
+          case 4: {// atualizar registro de livro
+          System.out.println("\nATUALIZACAO"); 
+          try {
+            // ler atributos a serem atualizados
+            System.out.print("ISBN do livro a ser atualizado: ");
+            String antigoIsbn = console.nextLine();
+            System.out.print("novo ISBN: ");
+            String isbn = console.nextLine(); 
+            System.out.print("novo Nome: ");
+            String nome = console.nextLine();
+            System.out.print("novo Preco: ");
+            float preco = Float.valueOf(console.nextLine());
+            // criar novo objeto e envia-lo para a funcao da lista
+            Livro liv = new Livro(-1, isbn, nome, preco);
+            arqLivros.update(liv, antigoIsbn);
+          } catch (Exception e) {
+          }
+        }
+            break;
 
-      l4.setTitulo("A Memória");
-      if (arqLivros.update(l4))
-        System.out.println("Livro de ID " + l4.getID() + " alterado!");
-      else
-        System.out.println("Livro de ID " + l4.getID() + " não encontrado!");
+          default: {
+            
+          }  
+          break;
+        }
 
-      //TESTANDO APROVEITAMENTO DE ESPACOS VAZIOS
-      idt4 = arqLivros.create(lt4);
-      System.out.println("\nLivro 4:\n" + arqLivros.read(idt4));
+      } while (opcao != 0);
 
-      //arqLivros.reorganizar();
-
-      /* 
-      System.out.println("\nLivro 3:\n" + arqLivros.read(3));
-      System.out.println("\nLivro 1:\n" + arqLivros.read(1));
-      System.out.println("\nLivro 5:\n" + arqLivros.read(5));
-      System.out.println("\nLivro 4:\n" + arqLivros.read(4));
-      System.out.println("\nLivro 2:\n" + arqLivros.read(2));
-      */
-
+      // Fim do programa
       arqLivros.close();
 
     } catch (Exception e) {
@@ -89,5 +126,7 @@ class Principal {
     }
 
   }
+
+  
 
 }
